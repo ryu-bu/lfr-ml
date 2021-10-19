@@ -3,3 +3,4 @@ networkx
 matplotlib
 pydot
 torch
+sklearn

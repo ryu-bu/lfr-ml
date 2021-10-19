@@ -7,6 +7,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+from torch.autograd import Variable
+
+
 # torch.cuda.is_available() checks and returns a Boolean True if a GPU is available, else it'll return False
 is_cuda = torch.cuda.is_available()
 
@@ -81,8 +84,8 @@ for connection in connections:
 topological_list = list(nx.topological_sort(G))
 
 # lstm start
-EMBEDDING_DIM = 6
-HIDDEN_DIM = 6
+EMBEDDING_DIM = 1
+HIDDEN_DIM = 5
 
 class LSTMTagger(nn.Module):
 
@@ -100,15 +103,16 @@ class LSTMTagger(nn.Module):
         self.hidden2tag = nn.Linear(hidden_dim, tagset_size)
 
     def forward(self, sentence):
-        embeds = self.word_embeddings(sentence)
-        lstm_out, _ = self.lstm(embeds.view(len(sentence), 1, -1))
-        tag_space = self.hidden2tag(lstm_out.view(len(sentence), -1))
-        tag_scores = F.log_softmax(tag_space, dim=1)
-        return tag_scores
+        # embeds = self.word_embeddings(sentence)
+        # lstm_out, _ = self.lstm(embeds.view(len(sentence), 1, -1))
+        # tag_space = self.hidden2tag(lstm_out.view(len(sentence), -1)) # change this for output size
+        tag_space = self.hidden2tag(sentence)
+        # tag_scores = F.log_softmax(tag_space, dim=1) # TODO: change this for vector output
+        return tag_space
 
-model_x = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(device_to_ix), max_x + 1)
-model_y = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(device_to_ix), max_y + 1)
-loss_function = nn.NLLLoss()
+model_x = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(device_to_ix), len(topological_list))
+model_y = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(device_to_ix), len(topological_list))
+loss_function = nn.MSELoss() #TODO: change this for linear regression, use mean square error etc...
 optimizer_x = optim.SGD(model_x.parameters(), lr=0.1)
 optimizer_y = optim.SGD(model_y.parameters(), lr=0.1)
 
@@ -123,14 +127,27 @@ for epoch in range(300):  # again, normally you would NOT do 300 epochs, it is t
     xtargets = prepare_sequence(topological_list, xtag_to_ix)
     ytargets = prepare_sequence(topological_list, ytag_to_ix)
 
-    xtag_scores = model_x(device_in)
-    ytag_scores = model_y(device_in)
-    xloss = loss_function(xtag_scores, xtargets)
-    yloss = loss_function(ytag_scores, ytargets)
+    device_in = np.array(device_in, dtype=np.float32)
+    xtargets = np.array(xtargets, dtype=np.float32)
+    ytargets = np.array(ytargets, dtype=np.float32)
+
+    print(ytargets)
+
+    inputs = Variable(torch.from_numpy(device_in))
+    xlabels = Variable(torch.from_numpy(xtargets))
+    ylabels = Variable(torch.from_numpy(ytargets))
+
+    xtag_scores = model_x(inputs)
+    ytag_scores = model_y(inputs)
+    xloss = loss_function(xtag_scores, xlabels)
+    yloss = loss_function(ytag_scores, ylabels)
     xloss.backward()
     yloss.backward()
     optimizer_x.step()
     optimizer_y.step()
+
+    ## TODO: check deepdrawing paper to see normalization method
+
     # for sentence, tags in training_data:
     #     # Step 1. Remember that Pytorch accumulates gradients.
     #     # We need to clear them out before each instance
@@ -151,9 +168,16 @@ for epoch in range(300):  # again, normally you would NOT do 300 epochs, it is t
     #     optimizer.step()
 
 with torch.no_grad():
-    inputs = prepare_sequence(topological_list, device_to_ix)
+    device_in = prepare_sequence(topological_list, device_to_ix)
+    device_in = np.array(inputs, dtype=np.float32)
+    inputs = Variable(torch.from_numpy(device_in))
     xtag_scores = model_x(inputs)
     ytag_scores = model_y(inputs)
+
+    print(xtag_scores)
+    print("correct: ", xlabels)
+    print(ytag_scores) ## always off by 21.9%???
+    print("correct: ", ylabels)
 
     # The sentence is "the dog ate the apple".  i,j corresponds to score for tag j
     # for word i. The predicted tag is the maximum scoring tag.
@@ -161,14 +185,14 @@ with torch.no_grad():
     # since 0 is index of the maximum value of row 1,
     # 1 is the index of maximum value of row 2, etc.
     # Which is DET NOUN VERB DET NOUN, the correct sequence!
-    count = 0
-    for row in xtag_scores:
-        max_valx = row.topk(1)[1]
-        print("x: ", max_valx)
-        max_valy = ytag_scores[count].topk(1)[1]
-        print("y: ", max_valy)
+    # count = 0
+    # for row in xtag_scores:
+    #     max_valx = row.topk(1)[1]
+    #     print("x: ", max_valx)
+    #     max_valy = ytag_scores[count].topk(1)[1]
+    #     print("y: ", max_valy)
         
-        count += 1
+    #     count += 1
 
 print(topological_list)
 
