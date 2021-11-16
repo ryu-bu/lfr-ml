@@ -1,4 +1,5 @@
 import json
+from os import system
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,7 +9,6 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 from torch.autograd import Variable
-
 
 # torch.cuda.is_available() checks and returns a Boolean True if a GPU is available, else it'll return False
 is_cuda = torch.cuda.is_available()

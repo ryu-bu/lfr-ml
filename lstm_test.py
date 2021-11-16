@@ -85,6 +85,8 @@ for connection in connections:
 
 topological_list = list(nx.topological_sort(G))
 
+print(topological_list)
+
 device_in = prepare_sequence(topological_list, device_to_ix)
 position_in = prepare_sequence(topological_list, position_sorted_list)
 
@@ -120,8 +122,9 @@ class LSTM(nn.Module):
 # training
 
 sc = MinMaxScaler()
+print(position_in[:, 0].shape)
 x = sc.fit_transform(device_in.reshape(len(device_in), 1))
-y = sc.fit_transform(position_in.reshape(len(position_in), 1))
+y = sc.fit_transform(position_in.reshape(len(position_in), 2))
 
 dataX = Variable(torch.Tensor(np.array(x)))
 dataY = Variable(torch.Tensor(np.array(y)))
