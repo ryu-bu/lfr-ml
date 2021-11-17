@@ -2,6 +2,7 @@ import json
 from os import readlink
 import networkx as nx
 import matplotlib.pyplot as plt
+from networkx.algorithms.similarity import optimize_edit_paths
 import numpy as np
 from numpy.core.fromnumeric import var
 import torch
@@ -27,7 +28,7 @@ else:
 
 def prepare_sequence(seq, to_ix):
     idxs = [to_ix[w] for w in seq]
-    return torch.tensor(idxs, dtype=torch.long)
+    return torch.tensor(idxs, dtype=torch.float)
  
 f = open('correct_device.json',)
  
@@ -99,53 +100,70 @@ class CNN(nn.Module):
         super(CNN, self).__init__()
 
         self.layer1 = torch.nn.Sequential(
-            nn.Conv1d(5, 32, kernel_size=2, stride=1, padding=1), # padding is 0
+            nn.Conv1d(1, 32, kernel_size=3, stride=1, padding=1), # padding is 0
             nn.ReLU(), # activation function, output = each value of output layer
             nn.MaxPool1d(kernel_size=2, stride=2), # take max val
             nn.Dropout(p=1 - keep_prob) # from 0 and 1, 
         )
-        # self.layer2 = torch.nn.Sequential(
-        #         torch.nn.Conv1d(32, 64, kernel_size=1, stride=1, padding=0),
-        #         torch.nn.ReLU(),
-        #         torch.nn.MaxPool1d(kernel_size=2, stride=2),
-        #         torch.nn.Dropout(p=1 - keep_prob))
+        self.layer2 = torch.nn.Sequential(
+            torch.nn.Conv1d(32, 64, kernel_size=1, stride=1, padding=0),
+            torch.nn.ReLU(),
+            torch.nn.MaxPool1d(kernel_size=2, stride=2),
+            torch.nn.Dropout(p=1 - keep_prob))
 
-        # self.layer3 = torch.nn.Sequential(
-        #     torch.nn.Conv1d(64, 128, kernel_size=3, stride=1, padding=0),
-        #     torch.nn.ReLU(),
-        #     torch.nn.MaxPool1d(kernel_size=2, stride=2, padding=1),
-        #     torch.nn.Dropout(p=1 - keep_prob))
+        self.layer3 = torch.nn.Sequential(
+            torch.nn.Conv1d(64, 128, kernel_size=1, stride=1, padding=0),
+            torch.nn.ReLU(),
+            torch.nn.MaxPool1d(kernel_size=2, stride=2, padding=1),
+            torch.nn.Dropout(p=1 - keep_prob))
 
         # L4 FC 4x4x128 inputs -> 625 outputs
-        self.fc1 = torch.nn.Linear(1 * 32, 625, bias=True)
-        torch.nn.init.xavier_uniform(self.fc1.weight)
-        self.layer4 = torch.nn.Sequential(
-            self.fc1,
+        self.fc1x = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
+        torch.nn.init.xavier_uniform(self.fc1x.weight)
+        self.fc1y = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
+        torch.nn.init.xavier_uniform(self.fc1y.weight)
+        self.layer4x = torch.nn.Sequential(
+            self.fc1x,
+            torch.nn.ReLU(),
+            torch.nn.Dropout(p=1 - keep_prob))
+
+        self.layer4y = torch.nn.Sequential(
+            self.fc1y,
             torch.nn.ReLU(),
             torch.nn.Dropout(p=1 - keep_prob))
         # L5 Final FC 625 inputs -> 5 outputs
-        self.fc2 = torch.nn.Linear(625, 5, bias=True)
-        torch.nn.init.xavier_uniform_(self.fc2.weight) # initialize parameters additonla step
+        self.fc2x = torch.nn.Linear(625, 5, bias=True)
+        self.fc2y = torch.nn.Linear(625, 5, bias=True)
+
+        torch.nn.init.xavier_uniform_(self.fc2x.weight) # initialize parameters additonla step
+        torch.nn.init.xavier_uniform_(self.fc2y.weight) # initialize parameters additonla step
 
     def forward(self, x):
-        out = self.layer1(x)
-        # out = self.layer2(out)
-        # out = self.layer3(out)
-        out = out.view(out.size(0), -1)   # Flatten them for FC
-        out = self.fc1(out)
-        out = self.fc2(out)
-        return out
+        xout = self.layer1(x)
+        xout = self.layer2(xout)
+        xout = self.layer3(xout)
+        xout = xout.view(xout.size(0), -1)   # Flatten them for FC
+        xout = self.fc1x(xout)
+        xout = self.fc2x(xout)
 
-xmodel = CNN()
-ymodel = CNN()
+
+        yout = self.layer1(x)
+        yout = self.layer2(yout)
+        yout = self.layer3(yout)
+        yout = yout.view(yout.size(0), -1)
+        yout = self.fc1y(yout)
+        yout = self.fc2y(yout)
+
+        return xout, yout
+
+model = CNN()
 
 learning_rate = 0.001
-criterion = torch.nn.CrossEntropyLoss()    # Softmax is internally computed.
-loss_function = nn.MSELoss()
-xoptimizer = torch.optim.Adam(params=xmodel.parameters(), lr=learning_rate)
-yoptimizer = torch.optim.Adam(params=ymodel.parameters(), lr=learning_rate)
+criterion = torch.nn.CrossEntropyLoss()    # Softmax is internally computed. for classification
+loss_function = nn.MSELoss() #TODO: try more loss functions
+optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
-training_epochs = 2000
+training_epochs = 1100
 
 data_loader = torch.utils.data.DataLoader(dataset=device_in,
                                           batch_size=32,
@@ -154,48 +172,39 @@ data_loader = torch.utils.data.DataLoader(dataset=device_in,
 xtargets = prepare_sequence(topological_list, xtag_to_ix)
 ytargets = prepare_sequence(topological_list, ytag_to_ix)
 
+in_width = int(device_in.shape[0])
+x_width = int(xtargets.shape[0])
+
+input_1d = device_in.reshape([1, 1, in_width])
+# x_1d = xtargets.reshape([1, 1, in_width])
+
 for epoch in range(training_epochs):
-    inputs = Variable(device_in.type(torch.FloatTensor))
-    xlabels = Variable(xtargets.type(torch.FloatTensor))
-    ylabels  = Variable(ytargets.type(torch.FloatTensor))
-
-
-    in_width = int(inputs.shape[0])
-    x_width = int(xlabels.shape[0])
-
-    input_1d = inputs.reshape([1, in_width, 1])
-    x_1d = xlabels.reshape([1, in_width, 1])
+    
 
     # for i, batch_in in enumerate(data_loader):
-
-    xoptimizer.zero_grad() # <= initialization of the gradients
-    yoptimizer.zero_grad()
+    optimizer.zero_grad()
     
     # forward propagation
-    xhypothesis = xmodel(input_1d)
-    yhyopthesis = ymodel(input_1d)
+    xhypothesis, yhypothesis = model(input_1d)
 
-    xcost = loss_function(xhypothesis, xlabels) # <= compute the loss function
-    ycost = loss_function(yhyopthesis, ylabels)
+    xcost = loss_function(xhypothesis, xtargets) # <= compute the loss function
+    ycost = loss_function(yhypothesis, ytargets)
+
+    cost = xcost + ycost
     
     # Backward propagation
-    xcost.backward() # <= compute the gradient of the loss/cost function    
-    ycost.backward()
+    cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
 
-    xoptimizer.step() # <= Update the gradients
-    yoptimizer.step()
+    optimizer.step()
 
+model.eval()
 
-xmodel.eval()
-ymodel.eval()
-
-xprediction = xmodel(input_1d)
-yprediction = ymodel(input_1d)
+xprediction, yprediction = model(input_1d)
 
 print("\n---- x prediciton ----")
 print(xprediction.data)
-print(xlabels)
+print(xtargets)
 
 print("\n---- y prediciton ----")
 print(yprediction.data)
-print(ylabels)
+print(ytargets)
