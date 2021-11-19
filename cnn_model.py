@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from networkx.algorithms.similarity import optimize_edit_paths
 import numpy as np
 from numpy.core.fromnumeric import var
+from sklearn import preprocessing
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -50,6 +51,7 @@ name_lookup = {}
 # store positions
 xtag_to_ix = {}
 ytag_to_ix = {}
+rtag_to_ix = {}
 device_to_ix = {}
 
 max_x = 0
@@ -68,8 +70,10 @@ for component in components:
     component_name_list.append(name)
     x_position = params['position'][0]
     y_position = params['position'][1]
+    rotation = params['rotation'] if "rotation" in params else 0
     xtag_to_ix[name] = x_position
     ytag_to_ix[name] = y_position
+    rtag_to_ix[name] = rotation
     position_sorted_list[name] = [x_position, y_position]
     
     max_x = x_position if x_position > max_x else max_x
@@ -122,6 +126,8 @@ class CNN(nn.Module):
         torch.nn.init.xavier_uniform(self.fc1x.weight)
         self.fc1y = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
         torch.nn.init.xavier_uniform(self.fc1y.weight)
+        self.fc1r = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
+        torch.nn.init.xavier_uniform(self.fc1r.weight)
         self.layer4x = torch.nn.Sequential(
             self.fc1x,
             torch.nn.ReLU(),
@@ -131,12 +137,19 @@ class CNN(nn.Module):
             self.fc1y,
             torch.nn.ReLU(),
             torch.nn.Dropout(p=1 - keep_prob))
+        
+        self.layer4r = torch.nn.Sequential(
+            self.fc1r,
+            torch.nn.ReLU(),
+            torch.nn.Dropout(p=1 - keep_prob))
         # L5 Final FC 625 inputs -> 5 outputs
         self.fc2x = torch.nn.Linear(625, 5, bias=True)
         self.fc2y = torch.nn.Linear(625, 5, bias=True)
+        self.fc2r = torch.nn.Linear(625, 5, bias=True)
 
         torch.nn.init.xavier_uniform_(self.fc2x.weight) # initialize parameters additonla step
         torch.nn.init.xavier_uniform_(self.fc2y.weight) # initialize parameters additonla step
+        torch.nn.init.xavier_uniform_(self.fc2r.weight) # initialize parameters additonla step
 
     def forward(self, x):
         xout = self.layer1(x)
@@ -154,7 +167,14 @@ class CNN(nn.Module):
         yout = self.fc1y(yout)
         yout = self.fc2y(yout)
 
-        return xout, yout
+        rout = self.layer1(x)
+        rout = self.layer2(rout)
+        rout = self.layer3(rout)
+        rout = rout.view(rout.size(0), -1)
+        rout = self.fc1r(rout)
+        rout = self.fc2r(rout)
+
+        return xout, yout, rout
 
 model = CNN()
 
@@ -171,6 +191,7 @@ data_loader = torch.utils.data.DataLoader(dataset=device_in,
 
 xtargets = prepare_sequence(topological_list, xtag_to_ix)
 ytargets = prepare_sequence(topological_list, ytag_to_ix)
+rtargets = prepare_sequence(topological_list, rtag_to_ix)
 
 in_width = int(device_in.shape[0])
 x_width = int(xtargets.shape[0])
@@ -185,12 +206,13 @@ for epoch in range(training_epochs):
     optimizer.zero_grad()
     
     # forward propagation
-    xhypothesis, yhypothesis = model(input_1d)
+    xhypothesis, yhypothesis, rhypothesis = model(input_1d)
 
     xcost = loss_function(xhypothesis, xtargets) # <= compute the loss function
     ycost = loss_function(yhypothesis, ytargets)
+    rcost = loss_function(rhypothesis, rtargets)
 
-    cost = xcost + ycost
+    cost = xcost + ycost + rcost
     
     # Backward propagation
     cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
@@ -199,7 +221,7 @@ for epoch in range(training_epochs):
 
 model.eval()
 
-xprediction, yprediction = model(input_1d)
+xprediction, yprediction, rprediction = model(input_1d)
 
 print("\n---- x prediciton ----")
 print(xprediction.data)
@@ -208,3 +230,7 @@ print(xtargets)
 print("\n---- y prediciton ----")
 print(yprediction.data)
 print(ytargets)
+
+print("\n---- r prediciton ----")
+print(rprediction.data)
+print(rtargets)
