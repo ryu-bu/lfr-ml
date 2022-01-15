@@ -1,5 +1,5 @@
 import json
-from os import readlink
+import glob, os
 import networkx as nx
 import matplotlib.pyplot as plt
 from networkx.algorithms.similarity import optimize_edit_paths
@@ -31,71 +31,76 @@ def prepare_sequence(seq, to_ix):
     idxs = [to_ix[w] for w in seq]
     return torch.tensor(idxs, dtype=torch.float)
  
-f = open('correct_device.json',)
+# f = open('train_files/correct_device.json',)
  
-data = json.load(f)
+# data = json.load(f)
 
-# initialize directed graph
-G = nx.DiGraph()
+def analyze_single_file(data):
 
-# features -> name, layers, id, port in components, and source, sink, component, entity in connection for topology.
-components = data['components']
-connections = data['connections'] 
+    # initialize directed graph
+    G = nx.DiGraph()
 
-component_name_list = []
-layer_list = data['layers']
+    # features -> name, layers, id, port in components, and source, sink, component, entity in connection for topology.
+    components = data['components']
+    connections = data['connections'] 
 
-# initialize {name: id} dict
-name_lookup = {}
+    component_name_list = []
+    layer_list = data['layers']
 
-# store positions
-xtag_to_ix = {}
-ytag_to_ix = {}
-rtag_to_ix = {}
-device_to_ix = {}
+    # initialize {name: id} dict
+    name_lookup = {}
 
-max_x = 0
-max_y = 0
+    # store positions
+    xtag_to_ix = {}
+    ytag_to_ix = {}
+    rtag_to_ix = {}
+    device_to_ix = {}
 
-position_sorted_list = {}
+    max_x = 0
+    max_y = 0
 
-# add node (component) to the graph
-for component in components:
-    name = component['name']
-    component_id = component['id']
-    params = component['params']
+    # position_sorted_list = {}
 
-    G.add_node(name)
-    name_lookup[component_id] = name
-    component_name_list.append(name)
-    x_position = params['position'][0]
-    y_position = params['position'][1]
-    rotation = params['rotation'] if "rotation" in params else 0
-    xtag_to_ix[name] = x_position
-    ytag_to_ix[name] = y_position
-    rtag_to_ix[name] = rotation
-    position_sorted_list[name] = [x_position, y_position]
-    
-    max_x = x_position if x_position > max_x else max_x
-    max_y = y_position if y_position > max_y else max_y
+    # add node (component) to the graph
+    for component in components:
+        name = component['name']
+        component_id = component['id']
+        params = component['params']
 
-    if name not in device_to_ix:
-        device_to_ix[name] = len(device_to_ix)
+        G.add_node(name)
+        name_lookup[component_id] = name
+        component_name_list.append(name)
+        x_position = params['position'][0]
+        y_position = params['position'][1]
+        rotation = params['rotation'] if "rotation" in params else 0
+        xtag_to_ix[name] = x_position
+        ytag_to_ix[name] = y_position
+        rtag_to_ix[name] = rotation
+        # position_sorted_list[name] = [x_position, y_position]
+        
+        max_x = x_position if x_position > max_x else max_x
+        max_y = y_position if y_position > max_y else max_y
 
-# add connection to the graph
-for connection in connections:
-    source_name = name_lookup[connection['source']['component']]
-    
-    for sink in connection['sinks']:
-        sink_name = name_lookup[sink['component']]
+        if name not in device_to_ix:
+            device_to_ix[name] = len(device_to_ix)
 
-        G.add_edge(source_name, sink_name)
+    # add connection to the graph
+    for connection in connections:
+        source_name = name_lookup[connection['source']['component']]
+        
+        if connection['sinks']:
+            for sink in connection['sinks']:
+                sink_name = name_lookup[sink['component']]
+
+                G.add_edge(source_name, sink_name)
 
 
-topological_list = list(nx.topological_sort(G))
+    topological_list = list(nx.topological_sort(G))
 
-device_in = prepare_sequence(topological_list, device_to_ix)
-position_in = prepare_sequence(topological_list, position_sorted_list)
+    device_in = prepare_sequence(topological_list, device_to_ix)
+    # position_in = prepare_sequence(topological_list, position_sorted_list)
+
+    return topological_list, device_in, xtag_to_ix, ytag_to_ix, rtag_to_ix
 
 keep_prob = 1
 
@@ -185,39 +190,61 @@ optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 
 training_epochs = 1100
 
-data_loader = torch.utils.data.DataLoader(dataset=device_in,
-                                          batch_size=32,
-                                          shuffle=True)
+# load data
+os.chdir("train_files")
+f = []
+input_1d_list = []
+xtargets_list = []
+ytargets_list = []
+rtargets_list = []
 
-xtargets = prepare_sequence(topological_list, xtag_to_ix)
-ytargets = prepare_sequence(topological_list, ytag_to_ix)
-rtargets = prepare_sequence(topological_list, rtag_to_ix)
+for file in glob.glob("*.json"):
+    f = open(file,)
+    data = json.load(f)
+    
+    topological_list, device_in, xtag_to_ix, ytag_to_ix, rtag_to_ix = analyze_single_file(data)
 
-in_width = int(device_in.shape[0])
-x_width = int(xtargets.shape[0])
 
-input_1d = device_in.reshape([1, 1, in_width])
+    data_loader = torch.utils.data.DataLoader(dataset=device_in,
+                                            batch_size=32,
+                                            shuffle=True)
+
+    xtargets = prepare_sequence(topological_list, xtag_to_ix)
+    ytargets = prepare_sequence(topological_list, ytag_to_ix)
+    rtargets = prepare_sequence(topological_list, rtag_to_ix)
+
+    in_width = int(device_in.shape[0])
+    x_width = int(xtargets.shape[0])
+
+    input_1d = device_in.reshape([1, 1, in_width])
+
+    xtargets_list.append(xtargets)
+    ytargets_list.append(ytargets)
+    rtargets_list.append(rtargets)
+    input_1d_list.append(input_1d)
 # x_1d = xtargets.reshape([1, 1, in_width])
 
+print(xtargets_list)
+
 for epoch in range(training_epochs):
-    
+    for i, input_1d in enumerate(input_1d_list, 0):
 
-    # for i, batch_in in enumerate(data_loader):
-    optimizer.zero_grad()
-    
-    # forward propagation
-    xhypothesis, yhypothesis, rhypothesis = model(input_1d)
+        # for i, batch_in in enumerate(data_loader):
+        optimizer.zero_grad()
+        
+        # forward propagation
+        xhypothesis, yhypothesis, rhypothesis = model(input_1d)
 
-    xcost = loss_function(xhypothesis, xtargets) # <= compute the loss function
-    ycost = loss_function(yhypothesis, ytargets)
-    rcost = loss_function(rhypothesis, rtargets)
+        xcost = loss_function(xhypothesis, xtargets_list[i]) # <= compute the loss function
+        ycost = loss_function(yhypothesis, ytargets_list[i])
+        rcost = loss_function(rhypothesis, rtargets_list[i])
 
-    cost = xcost + ycost + rcost
-    
-    # Backward propagation
-    cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
+        cost = xcost + ycost + rcost
+        
+        # Backward propagation
+        cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
 
-    optimizer.step()
+        optimizer.step()
 
 model.eval()
 
