@@ -6,6 +6,7 @@ from networkx.algorithms.similarity import optimize_edit_paths
 import numpy as np
 from numpy.core.fromnumeric import var
 from sklearn import preprocessing
+from sklearn.metrics import classification_report
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -35,7 +36,10 @@ def prepare_sequence(seq, to_ix):
  
 # data = json.load(f)
 
-def analyze_single_file(data):
+component_name_list = []
+device_to_ix = {}
+
+def analyze_single_file(data, component_name_list, device_to_ix):
 
     # initialize directed graph
     G = nx.DiGraph()
@@ -44,7 +48,7 @@ def analyze_single_file(data):
     components = data['components']
     connections = data['connections'] 
 
-    component_name_list = []
+    # component_name_list = x[]
     layer_list = data['layers']
 
     # initialize {name: id} dict
@@ -54,7 +58,7 @@ def analyze_single_file(data):
     xtag_to_ix = {}
     ytag_to_ix = {}
     rtag_to_ix = {}
-    device_to_ix = {}
+    # device_to_ix = {}
 
     max_x = 0
     max_y = 0
@@ -69,7 +73,8 @@ def analyze_single_file(data):
 
         G.add_node(name)
         name_lookup[component_id] = name
-        component_name_list.append(name)
+        if name not in component_name_list:
+            component_name_list.append(name)
         x_position = params['position'][0]
         y_position = params['position'][1]
         rotation = params['rotation'] if "rotation" in params else 0
@@ -83,6 +88,8 @@ def analyze_single_file(data):
 
         if name not in device_to_ix:
             device_to_ix[name] = len(device_to_ix)
+        
+        # print(device_to_ix)
 
     # add connection to the graph
     for connection in connections:
@@ -100,7 +107,7 @@ def analyze_single_file(data):
     device_in = prepare_sequence(topological_list, device_to_ix)
     # position_in = prepare_sequence(topological_list, position_sorted_list)
 
-    return topological_list, device_in, xtag_to_ix, ytag_to_ix, rtag_to_ix
+    return topological_list, device_in, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix
 
 keep_prob = 1
 
@@ -200,9 +207,10 @@ rtargets_list = []
 
 for file in glob.glob("*.json"):
     f = open(file,)
+    print(file)
     data = json.load(f)
     
-    topological_list, device_in, xtag_to_ix, ytag_to_ix, rtag_to_ix = analyze_single_file(data)
+    topological_list, device_in, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix = analyze_single_file(data, component_name_list, device_to_ix)
 
 
     data_loader = torch.utils.data.DataLoader(dataset=device_in,
@@ -248,16 +256,45 @@ for epoch in range(training_epochs):
 
 model.eval()
 
-xprediction, yprediction, rprediction = model(input_1d)
+# test a file
+ftest = open("correct_design2.json")
+test_data = json.load(ftest)
+
+topological_list, device_in_test, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix = analyze_single_file(test_data, component_name_list, device_to_ix)
+input_test = device_in_test.reshape([1, 1, in_width])
+
+xtargets = prepare_sequence(topological_list, xtag_to_ix)
+ytargets = prepare_sequence(topological_list, ytag_to_ix)
+rtargets = prepare_sequence(topological_list, rtag_to_ix)
+
+xprediction, yprediction, rprediction = model(input_test)
 
 print("\n---- x prediciton ----")
-print(xprediction.data)
+print("prediction: ", xprediction.data)
 print(xtargets)
 
 print("\n---- y prediciton ----")
-print(yprediction.data)
+print("prediction: ", yprediction.data)
 print(ytargets)
 
+def deg_classifer(data):
+    classified_list = []
+
+    for deg in data:
+        min_deg = 360
+        deg_item = 0
+        for i in [0, 90, 180, 270]:
+            temp = abs(i - deg)
+            if temp < min_deg:
+                min_deg = temp
+                deg_item = i
+
+        classified_list.append(deg_item)
+
+    return classified_list    
+
+# make classifier for rotation: 0, 90, 180, 270
 print("\n---- r prediciton ----")
-print(rprediction.data)
+# print(rprediction.data)
+print("prediction: ", deg_classifer(rprediction.data.tolist()[0]))
 print(rtargets)
