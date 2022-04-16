@@ -14,6 +14,14 @@ def assign_device_num(device_list):
 
     return new_list
 
+def delete_capitalized(randomized_list):
+    new_list = []
+    for item in randomized_list:
+        new_item = ''.join(ch for ch in item if not ch.isupper())
+        new_list.append(new_item)
+
+    return new_list
+
 current_dir = os.getcwd()
 mint_dir = current_dir + "/mint_examples"
 
@@ -39,16 +47,16 @@ for i in range(NUM_FILE):
     context = f"DEVICE {device_name}\n\nLAYER FLOW\n\n"
 
     randomized_list = assign_device_num(random.choices(device_list, k=5))
-
+    connection_list = delete_capitalized(randomized_list)
     for device in randomized_list:
-        context += f"{device}\n"
+        context += f"{device} ;\n"
 
     context += "\n\n"
     channelWidth = 400;
 
     count = 1
     for i in range(DEVICE_NUM - 1):
-        context += f"CHANNEL channel_{count} from {randomized_list[i]} 1 to {randomized_list[i+1]} 2 channelWidth={channelWidth};\n"
+        context += f"CHANNEL channel_{count} from {connection_list[i]} 1 to {connection_list[i+1]} 2 channelWidth={channelWidth} ;\n"
         count += 1
 
     context += "\nEND LAYER"

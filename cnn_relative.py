@@ -152,10 +152,10 @@ class CNN(nn.Module):
             torch.nn.MaxPool1d(kernel_size=2, stride=2, padding=1),
             torch.nn.Dropout(p=1 - keep_prob))
 
-        # L4 FC 4x4x128 inputs -> 625 outputs
-        self.fc1x = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
+        # L4 FC 128 inputs -> 625 outputs
+        self.fc1x = torch.nn.Linear(1 * 4 * 32, 500, bias=True)
         torch.nn.init.xavier_uniform(self.fc1x.weight)
-        self.fc1y = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
+        self.fc1y = torch.nn.Linear(1 * 4 * 32, 500, bias=True)
         torch.nn.init.xavier_uniform(self.fc1y.weight)
         self.fc1r = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
         torch.nn.init.xavier_uniform(self.fc1r.weight)
@@ -174,8 +174,8 @@ class CNN(nn.Module):
             torch.nn.ReLU(),
             torch.nn.Dropout(p=1 - keep_prob))
         # L5 Final FC 625 inputs -> 5 outputs
-        self.fc2x = torch.nn.Linear(625, 5, bias=True)
-        self.fc2y = torch.nn.Linear(625, 5, bias=True)
+        self.fc2x = torch.nn.Linear(125, 5, bias=True)
+        self.fc2y = torch.nn.Linear(125, 5, bias=True)
         self.fc2r = torch.nn.Linear(625, 5, bias=True)
 
         torch.nn.init.xavier_uniform_(self.fc2x.weight) # initialize parameters additonla step
@@ -188,14 +188,16 @@ class CNN(nn.Module):
         xout = self.layer3(xout)
         xout = xout.view(xout.size(0), -1)   # Flatten them for FC
         xout = self.fc1x(xout)
+        # make it 1x625 array
+        xout = xout.view(4, -1)
         xout = self.fc2x(xout)
-
 
         yout = self.layer1(x)
         yout = self.layer2(yout)
         yout = self.layer3(yout)
         yout = yout.view(yout.size(0), -1)
         yout = self.fc1y(yout)
+        yout = yout.view(4, -1)
         yout = self.fc2y(yout)
 
         rout = self.layer1(x)
@@ -289,27 +291,6 @@ for epoch in range(training_epochs):
         optimizer.step()
 
 model.eval()
-
-# test a file
-# ftest = open("correct_design10.json")
-# test_data = json.load(ftest)
-
-# topological_list, device_in_test, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix = analyze_single_file(test_data, component_name_list, device_to_ix)
-# input_test = device_in_test.reshape([1, 1, in_width])
-
-# xtargets = prepare_sequence(topological_list, xtag_to_ix)
-# ytargets = prepare_sequence(topological_list, ytag_to_ix)
-# rtargets = prepare_sequence(topological_list, rtag_to_ix)
-
-# xprediction, yprediction, rprediction = model(input_test)
-
-# print("\n---- x prediciton ----")
-# print("prediction: ", xprediction.data)
-# print(xtargets)
-
-# print("\n---- y prediciton ----")
-# print("prediction: ", yprediction.data)
-# print(ytargets)
 
 def calculate_error(predictions, targets):
     predictions = predictions.numpy()[0]

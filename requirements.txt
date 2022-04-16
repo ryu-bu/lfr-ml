@@ -5,3 +5,4 @@ pydot
 torch
 sklearn
 tensorflow
+parchmint
