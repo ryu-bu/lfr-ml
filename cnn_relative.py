@@ -153,9 +153,9 @@ class CNN(nn.Module):
             torch.nn.Dropout(p=1 - keep_prob))
 
         # L4 FC 128 inputs -> 625 outputs
-        self.fc1x = torch.nn.Linear(1 * 4 * 32, 500, bias=True)
+        self.fc1x = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
         torch.nn.init.xavier_uniform(self.fc1x.weight)
-        self.fc1y = torch.nn.Linear(1 * 4 * 32, 500, bias=True)
+        self.fc1y = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
         torch.nn.init.xavier_uniform(self.fc1y.weight)
         self.fc1r = torch.nn.Linear(1 * 4 * 32, 625, bias=True)
         torch.nn.init.xavier_uniform(self.fc1r.weight)
@@ -173,9 +173,9 @@ class CNN(nn.Module):
             self.fc1r,
             torch.nn.ReLU(),
             torch.nn.Dropout(p=1 - keep_prob))
-        # L5 Final FC 625 inputs -> 5 outputs
-        self.fc2x = torch.nn.Linear(125, 5, bias=True)
-        self.fc2y = torch.nn.Linear(125, 5, bias=True)
+        # L5 Final FC 625 inputs -> 4 outputs
+        self.fc2x = torch.nn.Linear(125, 4, bias=True)
+        self.fc2y = torch.nn.Linear(125, 4, bias=True)
         self.fc2r = torch.nn.Linear(625, 5, bias=True)
 
         torch.nn.init.xavier_uniform_(self.fc2x.weight) # initialize parameters additonla step
@@ -189,7 +189,7 @@ class CNN(nn.Module):
         xout = xout.view(xout.size(0), -1)   # Flatten them for FC
         xout = self.fc1x(xout)
         # make it 1x625 array
-        xout = xout.view(4, -1)
+        xout = xout.view(5, -1)
         xout = self.fc2x(xout)
 
         yout = self.layer1(x)
@@ -197,7 +197,7 @@ class CNN(nn.Module):
         yout = self.layer3(yout)
         yout = yout.view(yout.size(0), -1)
         yout = self.fc1y(yout)
-        yout = yout.view(4, -1)
+        yout = yout.view(5, -1)
         yout = self.fc2y(yout)
 
         rout = self.layer1(x)
@@ -264,72 +264,142 @@ X_train, X_test, Y_train, Y_test = train_test_split(xtargets_list, ytargets_list
 
 # print(component_name_list)
 
+def compute_distance(x):
+    x = np.array(x)
+    #initialize array
+    diff_mat = np.zeros((5, 4))
+    
+    #calculate diff
+    for i, val in enumerate(x, 0):
+        diff_array = x - val
+
+        # erase base element from the arary
+        diff_array = np.delete(diff_array, i)
+
+        diff_mat[i] = diff_array
+
+    return diff_mat
+
+
+# test a file
+ftest = open("correct_design10.json")
+test_data = json.load(ftest)
+
+topological_list, device_in_test, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix = analyze_single_file(test_data, component_name_list, device_to_ix)
+input_test = device_in_test.reshape([1, 1, in_width])
+
+xtargets = prepare_sequence(topological_list, xtag_to_ix)
+ytargets = prepare_sequence(topological_list, ytag_to_ix)
+rtargets = prepare_sequence(topological_list, rtag_to_ix)
+
 for epoch in range(training_epochs):
-    for i, X in enumerate(X_train, 0):
+    optimizer.zero_grad()
 
-        x = X[0]
-        device_num = X[1]
+    xprediction, yprediction, rprediction = model(input_test)
 
-        y = Y_train[i, 0]
-        r = Y_train[i, 1]
+    x = compute_distance(xtargets)
+    y = compute_distance(ytargets)
 
-        # for i, batch_in in enumerate(data_loader):
-        optimizer.zero_grad()
-        
-        # forward propagation
-        xhypothesis, yhypothesis, rhypothesis = model(device_num)
+    x = torch.tensor(x, dtype=torch.float)
+    y = torch.tensor(y, dtype=torch.float)
 
-        xcost = loss_function(xhypothesis, x) # <= compute the loss function
-        ycost = loss_function(yhypothesis, y)
-        rcost = loss_function(rhypothesis, r)
+    xcost = loss_function(xprediction, x) # <= compute the loss function
+    ycost = loss_function(yprediction, y)
+    rcost = loss_function(rprediction, rtargets)
 
-        cost = xcost + ycost + rcost
-        
-        # Backward propagation
-        cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
+    cost = xcost + ycost + rcost
+    
+    # Backward propagation
+    cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
 
-        optimizer.step()
+    optimizer.step()
 
 model.eval()
 
-def calculate_error(predictions, targets):
-    predictions = predictions.numpy()[0]
-    targets = targets.numpy()
+xprediction, yprediction, rprediction = model(input_test)
 
-    diff = 0
 
-    for i in range(DEVICE_COUNT):
-        pred_rel = predictions - predictions[i]
-        target_rel = targets - targets[i]
+print("\n---- x prediciton ----")
+print("prediction: ", xprediction.data)
+print("actual: ", compute_distance(xtargets))
 
-        diff += abs(pred_rel - target_rel)
+print("\n---- y prediciton ----")
+print("prediction: ", yprediction.data)
+print("actual: ", compute_distance(ytargets))
 
-        # print("error diff: ", diff)
 
-    return diff.sum() / DEVICE_COUNT
+# for epoch in range(training_epochs):
+#     for i, X in enumerate(X_train, 0):
 
-for i, X in enumerate(X_test, 0):
-    xprediction, yprediction, rprediction = model(X[1])
+#         x = X[0]
+#         device_num = X[1]
 
-    print("\n\ncount: ", i)
+#         y = Y_train[i, 0]
+#         r = Y_train[i, 1]
 
-    print("\n---- x prediciton ----")
-    print("prediction: ", xprediction.data)
-    print(X[0])
+#         # for i, batch_in in enumerate(data_loader):
+#         optimizer.zero_grad()
+        
+#         # forward propagation
+#         xhypothesis, yhypothesis, rhypothesis = model(device_num)
 
-    ce = calculate_error(xprediction.data, xtargets)
+#         x = compute_distance(x)
+#         y = compute_distance(y)
 
-    print("error: ", ce)
+#         x = torch.tensor(x, dtype=torch.float)
+#         y = torch.tensor(y, dtype=torch.float)
 
-    print("\n---- y prediciton ----")
-    print("prediction: ", yprediction.data)
-    print(Y_test[i][0])
+#         xcost = loss_function(xhypothesis, x) # <= compute the loss function
+#         ycost = loss_function(yhypothesis, y)
+#         rcost = loss_function(rhypothesis, r)
 
-    # make classifier for rotation: 0, 90, 180, 270
-    print("\n---- r prediciton ----")
-    # print(rprediction.data)
-    print("prediction: ", deg_classifer(rprediction.data.tolist()[0]))
-    print(Y_test[i][1])
+#         cost = xcost + ycost + rcost
+        
+#         # Backward propagation
+#         cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
+
+#         optimizer.step()
+
+# model.eval()
+
+# def calculate_error(predictions, targets):
+#     predictions = predictions.numpy()[0]
+#     targets = targets.numpy()
+
+#     diff = 0
+
+#     for i in range(DEVICE_COUNT):
+#         pred_rel = predictions - predictions[i]
+#         target_rel = targets - targets[i]
+
+#         diff += abs(pred_rel - target_rel)
+
+#         # print("error diff: ", diff)
+
+#     return diff.sum() / DEVICE_COUNT
+
+# for i, X in enumerate(X_test, 0):
+#     xprediction, yprediction, rprediction = model(X[1])
+
+#     print("\n\ncount: ", i)
+
+#     print("\n---- x prediciton ----")
+#     print("prediction: ", xprediction.data)
+#     print(X[0])
+
+#     ce = calculate_error(xprediction.data, xtargets)
+
+#     print("error: ", ce)
+
+#     print("\n---- y prediciton ----")
+#     print("prediction: ", yprediction.data)
+#     print(Y_test[i][0])
+
+#     # make classifier for rotation: 0, 90, 180, 270
+#     print("\n---- r prediciton ----")
+#     # print(rprediction.data)
+#     print("prediction: ", deg_classifer(rprediction.data.tolist()[0]))
+#     print(Y_test[i][1])
 
 # make classifier for rotation: 0, 90, 180, 270
 # print("\n---- r prediciton ----")
