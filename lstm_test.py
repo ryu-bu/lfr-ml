@@ -25,7 +25,7 @@ def prepare_sequence(seq, to_ix):
     idxs = [to_ix[w] for w in seq]
     return torch.tensor(idxs, dtype=torch.long)
  
-f = open('correct_device.json',)
+f = open('train_files/correct_device.json',)
  
 data = json.load(f)
 

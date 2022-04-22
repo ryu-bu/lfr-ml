@@ -8,70 +8,61 @@
     },
     "components": [
       {
-        "id": "81b04040-a56e-11ec-8255-71f7783ce01d",
-        "name": "Tree_1",
-        "entity": "TREE",
+        "id": "3ce2f3f0-c061-11ec-bf31-fb1a2da55b64",
+        "name": "Chamber_1",
+        "entity": "REACTION CHAMBER",
         "params": {
           "position": [
-            43000,
+            30000,
             20000
           ],
           "componentSpacing": 1000,
-          "flowChannelWidth": 800,
-          "rotation": 0,
-          "spacing": 4000,
-          "in": 1,
-          "out": 4,
-          "width": 2460,
+          "width": 5000,
+          "length": 5000,
           "height": 250,
-          "stageLength": 4000
+          "cornerRadius": 200,
+          "rotation": 0
         },
-        "x-span": 18800,
-        "y-span": 13600,
+        "x-span": 5000,
+        "y-span": 5000,
         "ports": [
           {
             "x": 0,
-            "y": 0,
+            "y": -2500,
             "layer": "FLOW",
             "label": "1"
           },
           {
-            "x": 9000,
-            "y": 13600,
+            "x": 2500,
+            "y": 0,
             "layer": "FLOW",
             "label": "2"
           },
           {
-            "x": 3000,
-            "y": 13600,
+            "x": 0,
+            "y": 2500,
             "layer": "FLOW",
             "label": "3"
           },
           {
-            "x": -3000,
-            "y": 13600,
+            "x": -2500,
+            "y": 0,
             "layer": "FLOW",
             "label": "4"
-          },
-          {
-            "x": -9000,
-            "y": 13600,
-            "layer": "FLOW",
-            "label": "5"
           }
         ],
         "layers": [
-          "66b3d590-a56e-11ec-8255-71f7783ce01d"
+          "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
         ]
       },
       {
-        "id": "95469820-a56e-11ec-8255-71f7783ce01d",
+        "id": "3ea0d090-c061-11ec-bf31-fb1a2da55b64",
         "name": "Chamber_2",
         "entity": "REACTION CHAMBER",
         "params": {
           "position": [
-            34000,
-            41000
+            30000,
+            30000
           ],
           "componentSpacing": 1000,
           "width": 5000,
@@ -109,17 +100,17 @@
           }
         ],
         "layers": [
-          "66b3d590-a56e-11ec-8255-71f7783ce01d"
+          "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
         ]
       },
       {
-        "id": "95ccb810-a56e-11ec-8255-71f7783ce01d",
+        "id": "3f8feb80-c061-11ec-bf31-fb1a2da55b64",
         "name": "Chamber_3",
         "entity": "REACTION CHAMBER",
         "params": {
           "position": [
-            40000,
-            41000
+            30000,
+            40000
           ],
           "componentSpacing": 1000,
           "width": 5000,
@@ -157,17 +148,101 @@
           }
         ],
         "layers": [
-          "66b3d590-a56e-11ec-8255-71f7783ce01d"
+          "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
         ]
       },
       {
-        "id": "96cac720-a56e-11ec-8255-71f7783ce01d",
+        "id": "8e1786f0-c061-11ec-bf31-fb1a2da55b64",
+        "name": "Mux_1",
+        "entity": "MUX",
+        "params": {
+          "position": [
+            50000,
+            35000
+          ],
+          "componentSpacing": 1000,
+          "flowChannelWidth": 800,
+          "rotation": 90,
+          "spacing": 6700,
+          "in": 1,
+          "out": 4,
+          "width": 1600,
+          "length": 1600,
+          "height": 250,
+          "stageLength": 4000,
+          "controlChannelWidth": 400
+        },
+        "x-span": 13600,
+        "y-span": 31750,
+        "ports": [
+          {
+            "x": 0,
+            "y": 0,
+            "layer": "FLOW",
+            "label": "1"
+          },
+          {
+            "x": 15075,
+            "y": 13600,
+            "layer": "FLOW",
+            "label": "2"
+          },
+          {
+            "x": 5025,
+            "y": 13600,
+            "layer": "FLOW",
+            "label": "3"
+          },
+          {
+            "x": -5025,
+            "y": 13600,
+            "layer": "FLOW",
+            "label": "4"
+          },
+          {
+            "x": -15075,
+            "y": 13600,
+            "layer": "FLOW",
+            "label": "5"
+          },
+          {
+            "x": -12450,
+            "y": 5800,
+            "layer": "CONTROL",
+            "label": "6"
+          },
+          {
+            "x": 12450,
+            "y": 7800,
+            "layer": "CONTROL",
+            "label": "7"
+          },
+          {
+            "x": -12450,
+            "y": 10600,
+            "layer": "CONTROL",
+            "label": "8"
+          },
+          {
+            "x": 12450,
+            "y": 12600,
+            "layer": "CONTROL",
+            "label": "9"
+          }
+        ],
+        "layers": [
+          "eee9dce0-c060-11ec-bf31-fb1a2da55b64",
+          "eee9dce1-c060-11ec-bf31-fb1a2da55b64"
+        ]
+      },
+      {
+        "id": "94c45be0-c061-11ec-bf31-fb1a2da55b64",
         "name": "Chamber_4",
         "entity": "REACTION CHAMBER",
         "params": {
           "position": [
-            46000,
-            41000
+            30000,
+            50000
           ],
           "componentSpacing": 1000,
           "width": 5000,
@@ -205,400 +280,85 @@
           }
         ],
         "layers": [
-          "66b3d590-a56e-11ec-8255-71f7783ce01d"
-        ]
-      },
-      {
-        "id": "97858ba0-a56e-11ec-8255-71f7783ce01d",
-        "name": "Chamber_5",
-        "entity": "REACTION CHAMBER",
-        "params": {
-          "position": [
-            52000,
-            41000
-          ],
-          "componentSpacing": 1000,
-          "width": 5000,
-          "length": 5000,
-          "height": 250,
-          "cornerRadius": 200,
-          "rotation": 0
-        },
-        "x-span": 5000,
-        "y-span": 5000,
-        "ports": [
-          {
-            "x": 0,
-            "y": -2500,
-            "layer": "FLOW",
-            "label": "1"
-          },
-          {
-            "x": 2500,
-            "y": 0,
-            "layer": "FLOW",
-            "label": "2"
-          },
-          {
-            "x": 0,
-            "y": 2500,
-            "layer": "FLOW",
-            "label": "3"
-          },
-          {
-            "x": -2500,
-            "y": 0,
-            "layer": "FLOW",
-            "label": "4"
-          }
-        ],
-        "layers": [
-          "66b3d590-a56e-11ec-8255-71f7783ce01d"
+          "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
         ]
       }
     ],
     "connections": [
       {
-        "id": "b54a3e10-a56e-11ec-8255-71f7783ce01d",
+        "id": "99cbbe30-c061-11ec-bf31-fb1a2da55b64",
         "name": "CHANNEL_1",
         "entity": "CHANNEL",
         "source": {
-          "component": "81b04040-a56e-11ec-8255-71f7783ce01d",
-          "port": "5"
-        },
-        "sinks": [
-          {
-            "component": "95469820-a56e-11ec-8255-71f7783ce01d",
-            "port": "1"
-          }
-        ],
-        "paths": [
-          [
-            [
-              34000,
-              33600
-            ],
-            [
-              34000,
-              38500
-            ],
-            [
-              34000,
-              38500
-            ]
-          ]
-        ],
-        "params": {
-          "start": [
-            34000,
-            33600
-          ],
-          "end": [
-            34000,
-            38500
-          ],
-          "wayPoints": [
-            [
-              34000,
-              33600
-            ],
-            [
-              34000,
-              38500
-            ],
-            [
-              34000,
-              38500
-            ]
-          ],
-          "segments": [
-            [
-              [
-                34000,
-                33600
-              ],
-              [
-                34000,
-                33600
-              ]
-            ],
-            [
-              [
-                34000,
-                33600
-              ],
-              [
-                34000,
-                38500
-              ]
-            ],
-            [
-              [
-                34000,
-                38500
-              ],
-              [
-                34000,
-                38500
-              ]
-            ],
-            [
-              [
-                34000,
-                38500
-              ],
-              [
-                34000,
-                38500
-              ]
-            ]
-          ],
-          "connectionSpacing": 1600,
-          "channelWidth": 800,
-          "height": 250
-        },
-        "layer": "66b3d590-a56e-11ec-8255-71f7783ce01d"
-      },
-      {
-        "id": "b76507c0-a56e-11ec-8255-71f7783ce01d",
-        "name": "CHANNEL_2",
-        "entity": "CHANNEL",
-        "source": {
-          "component": "81b04040-a56e-11ec-8255-71f7783ce01d",
-          "port": "4"
-        },
-        "sinks": [
-          {
-            "component": "95ccb810-a56e-11ec-8255-71f7783ce01d",
-            "port": "1"
-          }
-        ],
-        "paths": [
-          [
-            [
-              40000,
-              33600
-            ],
-            [
-              40000,
-              38500
-            ]
-          ]
-        ],
-        "params": {
-          "start": [
-            40000,
-            33600
-          ],
-          "end": [
-            40000,
-            38500
-          ],
-          "wayPoints": [
-            [
-              40000,
-              33600
-            ],
-            [
-              40000,
-              38500
-            ]
-          ],
-          "segments": [
-            [
-              [
-                40000,
-                33600
-              ],
-              [
-                40000,
-                33600
-              ]
-            ],
-            [
-              [
-                40000,
-                33600
-              ],
-              [
-                40000,
-                38500
-              ]
-            ],
-            [
-              [
-                40000,
-                38500
-              ],
-              [
-                40000,
-                38500
-              ]
-            ]
-          ],
-          "connectionSpacing": 1600,
-          "channelWidth": 800,
-          "height": 250
-        },
-        "layer": "66b3d590-a56e-11ec-8255-71f7783ce01d"
-      },
-      {
-        "id": "b917c0d0-a56e-11ec-8255-71f7783ce01d",
-        "name": "CHANNEL_3",
-        "entity": "CHANNEL",
-        "source": {
-          "component": "81b04040-a56e-11ec-8255-71f7783ce01d",
-          "port": "3"
-        },
-        "sinks": [
-          {
-            "component": "96cac720-a56e-11ec-8255-71f7783ce01d",
-            "port": "1"
-          }
-        ],
-        "paths": [
-          [
-            [
-              46000,
-              33600
-            ],
-            [
-              46000,
-              38500
-            ]
-          ]
-        ],
-        "params": {
-          "start": [
-            46000,
-            33600
-          ],
-          "end": [
-            46000,
-            38500
-          ],
-          "wayPoints": [
-            [
-              46000,
-              33600
-            ],
-            [
-              46000,
-              38500
-            ]
-          ],
-          "segments": [
-            [
-              [
-                46000,
-                33600
-              ],
-              [
-                46000,
-                33600
-              ]
-            ],
-            [
-              [
-                46000,
-                33600
-              ],
-              [
-                46000,
-                38500
-              ]
-            ],
-            [
-              [
-                46000,
-                38500
-              ],
-              [
-                46000,
-                38500
-              ]
-            ]
-          ],
-          "connectionSpacing": 1600,
-          "channelWidth": 800,
-          "height": 250
-        },
-        "layer": "66b3d590-a56e-11ec-8255-71f7783ce01d"
-      },
-      {
-        "id": "bb195d30-a56e-11ec-8255-71f7783ce01d",
-        "name": "CHANNEL_4",
-        "entity": "CHANNEL",
-        "source": {
-          "component": "81b04040-a56e-11ec-8255-71f7783ce01d",
+          "component": "3ce2f3f0-c061-11ec-bf31-fb1a2da55b64",
           "port": "2"
         },
         "sinks": [
           {
-            "component": "97858ba0-a56e-11ec-8255-71f7783ce01d",
-            "port": "1"
+            "component": "8e1786f0-c061-11ec-bf31-fb1a2da55b64",
+            "port": "5"
           }
         ],
         "paths": [
           [
             [
-              52000,
-              33600
+              32500,
+              20000
             ],
             [
-              52000,
-              38500
+              36400,
+              19925
             ]
           ]
         ],
         "params": {
           "start": [
-            52000,
-            33600
+            32500,
+            20000
           ],
           "end": [
-            52000,
-            38500
+            36400,
+            19925
           ],
           "wayPoints": [
             [
-              52000,
-              33600
+              32500,
+              20000
             ],
             [
-              52000,
-              38500
+              36400,
+              19925
             ]
           ],
           "segments": [
             [
               [
-                52000,
-                33600
+                32500,
+                20000
               ],
               [
-                52000,
-                33600
+                32500,
+                20000
               ]
             ],
             [
               [
-                52000,
-                33600
+                32500,
+                20000
               ],
               [
-                52000,
-                38500
+                36400,
+                19925
               ]
             ],
             [
               [
-                52000,
-                38500
+                36400,
+                19925
               ],
               [
-                52000,
-                38500
+                36400,
+                19925
               ]
             ]
           ],
@@ -606,12 +366,261 @@
           "channelWidth": 800,
           "height": 250
         },
-        "layer": "66b3d590-a56e-11ec-8255-71f7783ce01d"
+        "layer": "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
+      },
+      {
+        "id": "9bdcc3e0-c061-11ec-bf31-fb1a2da55b64",
+        "name": "CHANNEL_2",
+        "entity": "CHANNEL",
+        "source": {
+          "component": "3ea0d090-c061-11ec-bf31-fb1a2da55b64",
+          "port": "2"
+        },
+        "sinks": [
+          {
+            "component": "8e1786f0-c061-11ec-bf31-fb1a2da55b64",
+            "port": "4"
+          }
+        ],
+        "paths": [
+          [
+            [
+              32500,
+              30000
+            ],
+            [
+              36400,
+              29975
+            ]
+          ]
+        ],
+        "params": {
+          "start": [
+            32500,
+            30000
+          ],
+          "end": [
+            36400,
+            29975
+          ],
+          "wayPoints": [
+            [
+              32500,
+              30000
+            ],
+            [
+              36400,
+              29975
+            ]
+          ],
+          "segments": [
+            [
+              [
+                32500,
+                30000
+              ],
+              [
+                32500,
+                30000
+              ]
+            ],
+            [
+              [
+                32500,
+                30000
+              ],
+              [
+                36400,
+                29975
+              ]
+            ],
+            [
+              [
+                36400,
+                29975
+              ],
+              [
+                36400,
+                29975
+              ]
+            ]
+          ],
+          "connectionSpacing": 1600,
+          "channelWidth": 800,
+          "height": 250
+        },
+        "layer": "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
+      },
+      {
+        "id": "9e771dd0-c061-11ec-bf31-fb1a2da55b64",
+        "name": "CHANNEL_3",
+        "entity": "CHANNEL",
+        "source": {
+          "component": "3f8feb80-c061-11ec-bf31-fb1a2da55b64",
+          "port": "2"
+        },
+        "sinks": [
+          {
+            "component": "8e1786f0-c061-11ec-bf31-fb1a2da55b64",
+            "port": "3"
+          }
+        ],
+        "paths": [
+          [
+            [
+              32500,
+              40000
+            ],
+            [
+              36400,
+              40025
+            ]
+          ]
+        ],
+        "params": {
+          "start": [
+            32500,
+            40000
+          ],
+          "end": [
+            36400,
+            40025
+          ],
+          "wayPoints": [
+            [
+              32500,
+              40000
+            ],
+            [
+              36400,
+              40025
+            ]
+          ],
+          "segments": [
+            [
+              [
+                32500,
+                40000
+              ],
+              [
+                32500,
+                40000
+              ]
+            ],
+            [
+              [
+                32500,
+                40000
+              ],
+              [
+                36400,
+                40025
+              ]
+            ],
+            [
+              [
+                36400,
+                40025
+              ],
+              [
+                36400,
+                40025
+              ]
+            ]
+          ],
+          "connectionSpacing": 1600,
+          "channelWidth": 800,
+          "height": 250
+        },
+        "layer": "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
+      },
+      {
+        "id": "a0437960-c061-11ec-bf31-fb1a2da55b64",
+        "name": "CHANNEL_4",
+        "entity": "CHANNEL",
+        "source": {
+          "component": "94c45be0-c061-11ec-bf31-fb1a2da55b64",
+          "port": "2"
+        },
+        "sinks": [
+          {
+            "component": "8e1786f0-c061-11ec-bf31-fb1a2da55b64",
+            "port": "2"
+          }
+        ],
+        "paths": [
+          [
+            [
+              32500,
+              50000
+            ],
+            [
+              36400,
+              50075
+            ]
+          ]
+        ],
+        "params": {
+          "start": [
+            32500,
+            50000
+          ],
+          "end": [
+            36400,
+            50075
+          ],
+          "wayPoints": [
+            [
+              32500,
+              50000
+            ],
+            [
+              36400,
+              50075
+            ]
+          ],
+          "segments": [
+            [
+              [
+                32500,
+                50000
+              ],
+              [
+                32500,
+                50000
+              ]
+            ],
+            [
+              [
+                32500,
+                50000
+              ],
+              [
+                36400,
+                50075
+              ]
+            ],
+            [
+              [
+                36400,
+                50075
+              ],
+              [
+                36400,
+                50075
+              ]
+            ]
+          ],
+          "connectionSpacing": 1600,
+          "channelWidth": 800,
+          "height": 250
+        },
+        "layer": "eee9dce0-c060-11ec-bf31-fb1a2da55b64"
       }
     ],
     "layers": [
       {
-        "id": "66b3d590-a56e-11ec-8255-71f7783ce01d",
+        "id": "eee9dce0-c060-11ec-bf31-fb1a2da55b64",
         "name": "flow",
         "type": "FLOW",
         "group": "0",
@@ -621,7 +630,7 @@
         }
       },
       {
-        "id": "66b3d591-a56e-11ec-8255-71f7783ce01d",
+        "id": "eee9dce1-c060-11ec-bf31-fb1a2da55b64",
         "name": "control",
         "type": "FLOW",
         "group": "0",
@@ -631,7 +640,7 @@
         }
       },
       {
-        "id": "66b3fca0-a56e-11ec-8255-71f7783ce01d",
+        "id": "eee9dce2-c060-11ec-bf31-fb1a2da55b64",
         "name": "cells",
         "type": "FLOW",
         "group": "0",
@@ -650,9 +659,9 @@
           "flip": false
         },
         "features": {
-          "66b7cd30-a56e-11ec-8255-71f7783ce01d": {
-            "id": "66b7cd30-a56e-11ec-8255-71f7783ce01d",
-            "name": "66b7cd30-a56e-11ec-8255-71f7783ce01d",
+          "eeec9c00-c060-11ec-bf31-fb1a2da55b64": {
+            "id": "eeec9c00-c060-11ec-bf31-fb1a2da55b64",
+            "name": "eeec9c00-c060-11ec-bf31-fb1a2da55b64",
             "macro": "EDGE",
             "set": "Basic",
             "dxfData": [
@@ -689,40 +698,105 @@
             ],
             "type": "EDGE"
           },
-          "81aff220-a56e-11ec-8255-71f7783ce01d": {
-            "id": "81aff220-a56e-11ec-8255-71f7783ce01d",
+          "3ce27ec0-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "3ce27ec0-c061-11ec-bf31-fb1a2da55b64",
             "name": "New Feature",
-            "macro": "Tree",
+            "macro": "Chamber",
             "set": "Basic",
-            "referenceID": "81b04040-a56e-11ec-8255-71f7783ce01d",
+            "referenceID": "3ce2f3f0-c061-11ec-bf31-fb1a2da55b64",
             "params": {
               "position": [
-                43000,
+                30000,
                 20000
               ],
               "componentSpacing": 1000,
+              "width": 5000,
+              "length": 5000,
+              "height": 250,
+              "cornerRadius": 200,
+              "rotation": 0
+            },
+            "dxfData": [],
+            "type": "XY"
+          },
+          "3ea05b60-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "3ea05b60-c061-11ec-bf31-fb1a2da55b64",
+            "name": "New Feature",
+            "macro": "Chamber",
+            "set": "Basic",
+            "referenceID": "3ea0d090-c061-11ec-bf31-fb1a2da55b64",
+            "params": {
+              "position": [
+                30000,
+                30000
+              ],
+              "componentSpacing": 1000,
+              "width": 5000,
+              "length": 5000,
+              "height": 250,
+              "cornerRadius": 200,
+              "rotation": 0
+            },
+            "dxfData": [],
+            "type": "XY"
+          },
+          "3f8f7650-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "3f8f7650-c061-11ec-bf31-fb1a2da55b64",
+            "name": "New Feature",
+            "macro": "Chamber",
+            "set": "Basic",
+            "referenceID": "3f8feb80-c061-11ec-bf31-fb1a2da55b64",
+            "params": {
+              "position": [
+                30000,
+                40000
+              ],
+              "componentSpacing": 1000,
+              "width": 5000,
+              "length": 5000,
+              "height": 250,
+              "cornerRadius": 200,
+              "rotation": 0
+            },
+            "dxfData": [],
+            "type": "XY"
+          },
+          "8e16eab0-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "8e16eab0-c061-11ec-bf31-fb1a2da55b64",
+            "name": "New Feature",
+            "macro": "Mux",
+            "set": "Basic",
+            "referenceID": "8e1786f0-c061-11ec-bf31-fb1a2da55b64",
+            "params": {
+              "position": [
+                50000,
+                35000
+              ],
+              "componentSpacing": 1000,
               "flowChannelWidth": 800,
-              "rotation": 0,
-              "spacing": 4000,
+              "rotation": 90,
+              "spacing": 6700,
               "in": 1,
               "out": 4,
-              "width": 2460,
+              "width": 1600,
+              "length": 1600,
               "height": 250,
-              "stageLength": 4000
+              "stageLength": 4000,
+              "controlChannelWidth": 400
             },
             "dxfData": [],
             "type": "XY"
           },
-          "954622f0-a56e-11ec-8255-71f7783ce01d": {
-            "id": "954622f0-a56e-11ec-8255-71f7783ce01d",
+          "94c40dc0-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "94c40dc0-c061-11ec-bf31-fb1a2da55b64",
             "name": "New Feature",
             "macro": "Chamber",
             "set": "Basic",
-            "referenceID": "95469820-a56e-11ec-8255-71f7783ce01d",
+            "referenceID": "94c45be0-c061-11ec-bf31-fb1a2da55b64",
             "params": {
               "position": [
-                34000,
-                41000
+                30000,
+                50000
               ],
               "componentSpacing": 1000,
               "width": 5000,
@@ -734,137 +808,60 @@
             "dxfData": [],
             "type": "XY"
           },
-          "95cc42e0-a56e-11ec-8255-71f7783ce01d": {
-            "id": "95cc42e0-a56e-11ec-8255-71f7783ce01d",
-            "name": "New Feature",
-            "macro": "Chamber",
-            "set": "Basic",
-            "referenceID": "95ccb810-a56e-11ec-8255-71f7783ce01d",
-            "params": {
-              "position": [
-                40000,
-                41000
-              ],
-              "componentSpacing": 1000,
-              "width": 5000,
-              "length": 5000,
-              "height": 250,
-              "cornerRadius": 200,
-              "rotation": 0
-            },
-            "dxfData": [],
-            "type": "XY"
-          },
-          "96ca2ae0-a56e-11ec-8255-71f7783ce01d": {
-            "id": "96ca2ae0-a56e-11ec-8255-71f7783ce01d",
-            "name": "New Feature",
-            "macro": "Chamber",
-            "set": "Basic",
-            "referenceID": "96cac720-a56e-11ec-8255-71f7783ce01d",
-            "params": {
-              "position": [
-                46000,
-                41000
-              ],
-              "componentSpacing": 1000,
-              "width": 5000,
-              "length": 5000,
-              "height": 250,
-              "cornerRadius": 200,
-              "rotation": 0
-            },
-            "dxfData": [],
-            "type": "XY"
-          },
-          "9784ef60-a56e-11ec-8255-71f7783ce01d": {
-            "id": "9784ef60-a56e-11ec-8255-71f7783ce01d",
-            "name": "New Feature",
-            "macro": "Chamber",
-            "set": "Basic",
-            "referenceID": "97858ba0-a56e-11ec-8255-71f7783ce01d",
-            "params": {
-              "position": [
-                52000,
-                41000
-              ],
-              "componentSpacing": 1000,
-              "width": 5000,
-              "length": 5000,
-              "height": 250,
-              "cornerRadius": 200,
-              "rotation": 0
-            },
-            "dxfData": [],
-            "type": "XY"
-          },
-          "b36418f0-a56e-11ec-8255-71f7783ce01d": {
-            "id": "b36418f0-a56e-11ec-8255-71f7783ce01d",
+          "990c65d0-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "990c65d0-c061-11ec-bf31-fb1a2da55b64",
             "name": "New Feature",
             "macro": "Connection",
             "set": "Basic",
-            "referenceID": "b54a3e10-a56e-11ec-8255-71f7783ce01d",
+            "referenceID": "99cbbe30-c061-11ec-bf31-fb1a2da55b64",
             "params": {
               "start": [
-                34000,
-                33600
+                32500,
+                20000
               ],
               "end": [
-                34000,
-                38500
+                36400,
+                19925
               ],
               "wayPoints": [
                 [
-                  34000,
-                  33600
+                  32500,
+                  20000
                 ],
                 [
-                  34000,
-                  38500
-                ],
-                [
-                  34000,
-                  38500
+                  36400,
+                  19925
                 ]
               ],
               "segments": [
                 [
                   [
-                    34000,
-                    33600
+                    32500,
+                    20000
                   ],
                   [
-                    34000,
-                    33600
+                    32500,
+                    20000
                   ]
                 ],
                 [
                   [
-                    34000,
-                    33600
+                    32500,
+                    20000
                   ],
                   [
-                    34000,
-                    38500
+                    36400,
+                    19925
                   ]
                 ],
                 [
                   [
-                    34000,
-                    38500
+                    36400,
+                    19925
                   ],
                   [
-                    34000,
-                    38500
-                  ]
-                ],
-                [
-                  [
-                    34000,
-                    38500
-                  ],
-                  [
-                    34000,
-                    38500
+                    36400,
+                    19925
                   ]
                 ]
               ],
@@ -875,60 +872,60 @@
             "dxfData": [],
             "type": "XY"
           },
-          "b6a75d10-a56e-11ec-8255-71f7783ce01d": {
-            "id": "b6a75d10-a56e-11ec-8255-71f7783ce01d",
+          "9b3671c0-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "9b3671c0-c061-11ec-bf31-fb1a2da55b64",
             "name": "New Feature",
             "macro": "Connection",
             "set": "Basic",
-            "referenceID": "b76507c0-a56e-11ec-8255-71f7783ce01d",
+            "referenceID": "9bdcc3e0-c061-11ec-bf31-fb1a2da55b64",
             "params": {
               "start": [
-                40000,
-                33600
+                32500,
+                30000
               ],
               "end": [
-                40000,
-                38500
+                36400,
+                29975
               ],
               "wayPoints": [
                 [
-                  40000,
-                  33600
+                  32500,
+                  30000
                 ],
                 [
-                  40000,
-                  38500
+                  36400,
+                  29975
                 ]
               ],
               "segments": [
                 [
                   [
-                    40000,
-                    33600
+                    32500,
+                    30000
                   ],
                   [
-                    40000,
-                    33600
+                    32500,
+                    30000
                   ]
                 ],
                 [
                   [
-                    40000,
-                    33600
+                    32500,
+                    30000
                   ],
                   [
-                    40000,
-                    38500
+                    36400,
+                    29975
                   ]
                 ],
                 [
                   [
-                    40000,
-                    38500
+                    36400,
+                    29975
                   ],
                   [
-                    40000,
-                    38500
+                    36400,
+                    29975
                   ]
                 ]
               ],
@@ -939,60 +936,60 @@
             "dxfData": [],
             "type": "XY"
           },
-          "b882d3d0-a56e-11ec-8255-71f7783ce01d": {
-            "id": "b882d3d0-a56e-11ec-8255-71f7783ce01d",
+          "9ddb7a10-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "9ddb7a10-c061-11ec-bf31-fb1a2da55b64",
             "name": "New Feature",
             "macro": "Connection",
             "set": "Basic",
-            "referenceID": "b917c0d0-a56e-11ec-8255-71f7783ce01d",
+            "referenceID": "9e771dd0-c061-11ec-bf31-fb1a2da55b64",
             "params": {
               "start": [
-                46000,
-                33600
+                32500,
+                40000
               ],
               "end": [
-                46000,
-                38500
+                36400,
+                40025
               ],
               "wayPoints": [
                 [
-                  46000,
-                  33600
+                  32500,
+                  40000
                 ],
                 [
-                  46000,
-                  38500
+                  36400,
+                  40025
                 ]
               ],
               "segments": [
                 [
                   [
-                    46000,
-                    33600
+                    32500,
+                    40000
                   ],
                   [
-                    46000,
-                    33600
+                    32500,
+                    40000
                   ]
                 ],
                 [
                   [
-                    46000,
-                    33600
+                    32500,
+                    40000
                   ],
                   [
-                    46000,
-                    38500
+                    36400,
+                    40025
                   ]
                 ],
                 [
                   [
-                    46000,
-                    38500
+                    36400,
+                    40025
                   ],
                   [
-                    46000,
-                    38500
+                    36400,
+                    40025
                   ]
                 ]
               ],
@@ -1003,60 +1000,60 @@
             "dxfData": [],
             "type": "XY"
           },
-          "ba3c43a0-a56e-11ec-8255-71f7783ce01d": {
-            "id": "ba3c43a0-a56e-11ec-8255-71f7783ce01d",
+          "9f81fe20-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "9f81fe20-c061-11ec-bf31-fb1a2da55b64",
             "name": "New Feature",
             "macro": "Connection",
             "set": "Basic",
-            "referenceID": "bb195d30-a56e-11ec-8255-71f7783ce01d",
+            "referenceID": "a0437960-c061-11ec-bf31-fb1a2da55b64",
             "params": {
               "start": [
-                52000,
-                33600
+                32500,
+                50000
               ],
               "end": [
-                52000,
-                38500
+                36400,
+                50075
               ],
               "wayPoints": [
                 [
-                  52000,
-                  33600
+                  32500,
+                  50000
                 ],
                 [
-                  52000,
-                  38500
+                  36400,
+                  50075
                 ]
               ],
               "segments": [
                 [
                   [
-                    52000,
-                    33600
+                    32500,
+                    50000
                   ],
                   [
-                    52000,
-                    33600
+                    32500,
+                    50000
                   ]
                 ],
                 [
                   [
-                    52000,
-                    33600
+                    32500,
+                    50000
                   ],
                   [
-                    52000,
-                    38500
+                    36400,
+                    50075
                   ]
                 ],
                 [
                   [
-                    52000,
-                    38500
+                    36400,
+                    50075
                   ],
                   [
-                    52000,
-                    38500
+                    36400,
+                    50075
                   ]
                 ]
               ],
@@ -1077,9 +1074,9 @@
           "flip": true
         },
         "features": {
-          "66b7cd30-a56e-11ec-8255-71f7783ce01d": {
-            "id": "66b7cd30-a56e-11ec-8255-71f7783ce01d",
-            "name": "66b7cd30-a56e-11ec-8255-71f7783ce01d",
+          "eeec9c00-c060-11ec-bf31-fb1a2da55b64": {
+            "id": "eeec9c00-c060-11ec-bf31-fb1a2da55b64",
+            "name": "eeec9c00-c060-11ec-bf31-fb1a2da55b64",
             "macro": "EDGE",
             "set": "Basic",
             "dxfData": [
@@ -1115,6 +1112,32 @@
               }
             ],
             "type": "EDGE"
+          },
+          "8e175fe0-c061-11ec-bf31-fb1a2da55b64": {
+            "id": "8e175fe0-c061-11ec-bf31-fb1a2da55b64",
+            "name": "New Feature",
+            "macro": "Mux_control",
+            "set": "Basic",
+            "referenceID": "8e1786f0-c061-11ec-bf31-fb1a2da55b64",
+            "params": {
+              "position": [
+                50000,
+                35000
+              ],
+              "componentSpacing": 1000,
+              "flowChannelWidth": 800,
+              "rotation": 90,
+              "spacing": 6700,
+              "in": 1,
+              "out": 4,
+              "width": 1600,
+              "length": 1600,
+              "height": 250,
+              "stageLength": 4000,
+              "controlChannelWidth": 400
+            },
+            "dxfData": [],
+            "type": "XY"
           }
         }
       },
@@ -1126,9 +1149,9 @@
           "flip": false
         },
         "features": {
-          "66b7cd30-a56e-11ec-8255-71f7783ce01d": {
-            "id": "66b7cd30-a56e-11ec-8255-71f7783ce01d",
-            "name": "66b7cd30-a56e-11ec-8255-71f7783ce01d",
+          "eeec9c00-c060-11ec-bf31-fb1a2da55b64": {
+            "id": "eeec9c00-c060-11ec-bf31-fb1a2da55b64",
+            "name": "eeec9c00-c060-11ec-bf31-fb1a2da55b64",
             "macro": "EDGE",
             "set": "Basic",
             "dxfData": [

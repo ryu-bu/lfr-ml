@@ -18,6 +18,9 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
 DEVICE_COUNT = 5
+X_BASE = 45000
+Y_BASE = 30000
+MAG = 2300
 
 # torch.cuda.is_available() checks and returns a Boolean True if a GPU is available, else it'll return False
 is_cuda = torch.cuda.is_available()
@@ -174,8 +177,8 @@ class CNN(nn.Module):
             torch.nn.ReLU(),
             torch.nn.Dropout(p=1 - keep_prob))
         # L5 Final FC 625 inputs -> 4 outputs
-        self.fc2x = torch.nn.Linear(125, 4, bias=True)
-        self.fc2y = torch.nn.Linear(125, 4, bias=True)
+        self.fc2x = torch.nn.Linear(625, 4, bias=True)
+        self.fc2y = torch.nn.Linear(625, 4, bias=True)
         self.fc2r = torch.nn.Linear(625, 5, bias=True)
 
         torch.nn.init.xavier_uniform_(self.fc2x.weight) # initialize parameters additonla step
@@ -189,7 +192,7 @@ class CNN(nn.Module):
         xout = xout.view(xout.size(0), -1)   # Flatten them for FC
         xout = self.fc1x(xout)
         # make it 1x625 array
-        xout = xout.view(5, -1)
+        # xout = xout.view(5, -1)
         xout = self.fc2x(xout)
 
         yout = self.layer1(x)
@@ -197,7 +200,7 @@ class CNN(nn.Module):
         yout = self.layer3(yout)
         yout = yout.view(yout.size(0), -1)
         yout = self.fc1y(yout)
-        yout = yout.view(5, -1)
+        # yout = yout.view(5, -1)
         yout = self.fc2y(yout)
 
         rout = self.layer1(x)
@@ -229,7 +232,7 @@ rtargets_list = []
 
 for file in files:
     f = open(file,)
-    # print(file)
+    print(file)
     data = json.load(f)
     
     topological_list, device_in, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix = analyze_single_file(data, component_name_list, device_to_ix)
@@ -248,11 +251,13 @@ for file in files:
 
     input_1d = device_in.reshape([1, 1, in_width])
 
-    xtargets_list.append([xtargets, input_1d])
+    xtargets_list.append([xtargets, input_1d, file])
     # put ytargets and rtargets together
     ytargets_list.append([ytargets, rtargets])
     # rtargets_list.append(rtargets)
     # input_1d_list.append(input_1d)
+
+    f.close()
 # x_1d = xtargets.reshape([1, 1, in_width])
 
 # print(xtargets_list)
@@ -260,7 +265,9 @@ for file in files:
 xtargets_list = np.asarray(xtargets_list)
 ytargets_list = np.asarray(ytargets_list)
 
-X_train, X_test, Y_train, Y_test = train_test_split(xtargets_list, ytargets_list, test_size=0.33, random_state=42)
+# X_train, X_test, Y_train, Y_test = train_test_split(xtargets_list, ytargets_list, test_size=0.33, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(xtargets_list, ytargets_list, test_size=0.1, shuffle=False)
+
 
 # print(component_name_list)
 
@@ -280,128 +287,198 @@ def compute_distance(x):
 
     return diff_mat
 
+def compute_relative_distance(x_array, y_array):
+    x_array = np.array(x_array)
+    y_array = np.array(y_array)
 
-# test a file
-ftest = open("correct_design10.json")
-test_data = json.load(ftest)
+    # calc distance
+    x_diff = x_array - x_array[0]
+    y_diff = y_array - y_array[0]
 
-topological_list, device_in_test, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix = analyze_single_file(test_data, component_name_list, device_to_ix)
-input_test = device_in_test.reshape([1, 1, in_width])
+    # delete first element because its always 0
+    x_diff = np.delete(x_diff, 0)
+    y_diff = np.delete(y_diff, 0)
 
-xtargets = prepare_sequence(topological_list, xtag_to_ix)
-ytargets = prepare_sequence(topological_list, ytag_to_ix)
-rtargets = prepare_sequence(topological_list, rtag_to_ix)
+    base_val = float('inf')
 
-for epoch in range(training_epochs):
-    optimizer.zero_grad()
+    # find base val
+    for x, y in zip(x_diff, y_diff):
+        base_val = abs(x) if abs(x) < base_val and x != 0 else base_val
+        base_val = abs(y) if abs(y) < base_val and y != 0 else base_val
 
-    xprediction, yprediction, rprediction = model(input_test)
+    x_diff /= base_val
+    y_diff /= base_val
 
-    x = compute_distance(xtargets)
-    y = compute_distance(ytargets)
-
-    x = torch.tensor(x, dtype=torch.float)
-    y = torch.tensor(y, dtype=torch.float)
-
-    xcost = loss_function(xprediction, x) # <= compute the loss function
-    ycost = loss_function(yprediction, y)
-    rcost = loss_function(rprediction, rtargets)
-
-    cost = xcost + ycost + rcost
-    
-    # Backward propagation
-    cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
-
-    optimizer.step()
-
-model.eval()
-
-xprediction, yprediction, rprediction = model(input_test)
+    return torch.tensor(x_diff), torch.tensor(y_diff)
 
 
-print("\n---- x prediciton ----")
-print("prediction: ", xprediction.data)
-print("actual: ", compute_distance(xtargets))
+# reverse compute_distance
+def put_back(x, y):
+    x = np.array(x)
+    y = np.array(y)
 
-print("\n---- y prediciton ----")
-print("prediction: ", yprediction.data)
-print("actual: ", compute_distance(ytargets))
+    x_dist = x * MAG;
+    y_dist = y * MAG;
 
+    x_dist = np.insert(x_dist, 0, 0)
+    y_dist = np.insert(y_dist, 0, 0)
+
+    x_dist += X_BASE;
+    y_dist += Y_BASE;
+
+    return x_dist, y_dist
+
+
+
+# # test a file
+# ftest = open("tdroplet9.json")
+# test_data = json.load(ftest)
+
+# topological_list, device_in_test, xtag_to_ix, ytag_to_ix, rtag_to_ix, component_name_list, device_to_ix = analyze_single_file(test_data, component_name_list, device_to_ix)
+# input_test = device_in_test.reshape([1, 1, in_width])
+
+# xtargets = prepare_sequence(topological_list, xtag_to_ix)
+# ytargets = prepare_sequence(topological_list, ytag_to_ix)
+# rtargets = prepare_sequence(topological_list, rtag_to_ix)
 
 # for epoch in range(training_epochs):
-#     for i, X in enumerate(X_train, 0):
+#     optimizer.zero_grad()
 
-#         x = X[0]
-#         device_num = X[1]
+#     xprediction, yprediction, rprediction = model(input_test)
 
-#         y = Y_train[i, 0]
-#         r = Y_train[i, 1]
 
-#         # for i, batch_in in enumerate(data_loader):
-#         optimizer.zero_grad()
-        
-#         # forward propagation
-#         xhypothesis, yhypothesis, rhypothesis = model(device_num)
+#     # x = compute_distance(xtargets)
+#     # y = compute_distance(ytargets)
 
-#         x = compute_distance(x)
-#         y = compute_distance(y)
+#     x, y = compute_relative_distance(xtargets, ytargets)
 
-#         x = torch.tensor(x, dtype=torch.float)
-#         y = torch.tensor(y, dtype=torch.float)
+#     # x = torch.tensor(x, dtype=torch.float)
+#     # y = torch.tensor(y, dtype=torch.float)
 
-#         xcost = loss_function(xhypothesis, x) # <= compute the loss function
-#         ycost = loss_function(yhypothesis, y)
-#         rcost = loss_function(rhypothesis, r)
+#     xcost = loss_function(xprediction, x) # <= compute the loss function
+#     ycost = loss_function(yprediction, y)
+#     rcost = loss_function(rprediction, rtargets)
 
-#         cost = xcost + ycost + rcost
-        
-#         # Backward propagation
-#         cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
+#     cost = xcost + ycost + rcost
+    
+#     # Backward propagation
+#     cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
 
-#         optimizer.step()
+#     optimizer.step()
 
 # model.eval()
 
-# def calculate_error(predictions, targets):
-#     predictions = predictions.numpy()[0]
-#     targets = targets.numpy()
+# xprediction, yprediction, rprediction = model(input_test)
+# xpred_abs, ypred_abs = put_back(xprediction.data, yprediction.data)
 
-#     diff = 0
+# x_actual, y_actual = compute_relative_distance(xtargets, ytargets)
 
-#     for i in range(DEVICE_COUNT):
-#         pred_rel = predictions - predictions[i]
-#         target_rel = targets - targets[i]
+# print("\n---- x prediciton ----")
+# print("prediction ratio: ", xprediction)
+# print("prediction abs: ", xpred_abs)
 
-#         diff += abs(pred_rel - target_rel)
+# print("actual ratio: ", x_actual)
+# print("actual abs: ", xtargets)
 
-#         # print("error diff: ", diff)
+# ce = calculate_error(xprediction.data, xtargets)
 
-#     return diff.sum() / DEVICE_COUNT
+# print("error: ", ce)
 
-# for i, X in enumerate(X_test, 0):
-#     xprediction, yprediction, rprediction = model(X[1])
+# print("\n---- y prediciton ----")
+# print("prediction: ", yprediction)
+# print("prediction abs: ", ypred_abs)
 
-#     print("\n\ncount: ", i)
+# print("actual ratio: ", y_actual)
+# print("actual abs: ", ytargets)
 
-#     print("\n---- x prediciton ----")
-#     print("prediction: ", xprediction.data)
-#     print(X[0])
+# # make classifier for rotation: 0, 90, 180, 270
+# print("\n---- r prediciton ----")
+# # print(rprediction.data)
+# print("prediction: ", deg_classifer(rprediction.data.tolist()[0]))
+# print(rtargets)
 
-#     ce = calculate_error(xprediction.data, xtargets)
 
-#     print("error: ", ce)
+for epoch in range(training_epochs):
+    for i, X in enumerate(X_train, 0):
 
-#     print("\n---- y prediciton ----")
-#     print("prediction: ", yprediction.data)
-#     print(Y_test[i][0])
+        x = X[0]
+        device_num = X[1]
 
-#     # make classifier for rotation: 0, 90, 180, 270
-#     print("\n---- r prediciton ----")
-#     # print(rprediction.data)
-#     print("prediction: ", deg_classifer(rprediction.data.tolist()[0]))
-#     print(Y_test[i][1])
+        y = Y_train[i, 0]
+        r = Y_train[i, 1]
 
-# make classifier for rotation: 0, 90, 180, 270
+        # for i, batch_in in enumerate(data_loader):
+        optimizer.zero_grad()
+        
+        # forward propagation
+        xhypothesis, yhypothesis, rhypothesis = model(device_num)
+
+        x, y = compute_relative_distance(x, y)
+
+        xcost = loss_function(xhypothesis, x) # <= compute the loss function
+        ycost = loss_function(yhypothesis, y)
+        rcost = loss_function(rhypothesis, r)
+
+        cost = xcost + ycost + rcost
+        
+        # Backward propagation
+        cost.backward(retain_graph=True) # <= compute the gradient of the loss/cost function    
+
+        optimizer.step()
+
+model.eval()
+
+def calculate_error(predictions, targets):
+    predictions = predictions.numpy()[0]
+    targets = targets.numpy()
+
+    diff = 0
+
+    for i in range(DEVICE_COUNT):
+        pred_rel = predictions - predictions[i]
+        target_rel = targets - targets[i]
+
+        diff += abs(pred_rel - target_rel)
+
+        # print("error diff: ", diff)
+
+    return diff.sum() / DEVICE_COUNT
+
+for i, X in enumerate(X_test, 0):
+    xprediction, yprediction, rprediction = model(X[1])
+
+    x_actual, y_actual = compute_relative_distance(X[0], Y_test[i][0])
+
+    xpred_abs, ypred_abs = put_back(xprediction.data, yprediction.data)
+
+    print("\n\ncount: ", i)
+    print("file name: ", X[2])
+
+    print("\n---- x prediciton ----")
+    print("prediction ratio: ", xprediction)
+    print("prediction abs: ", xpred_abs)
+
+    print("actual ratio: ", x_actual)
+    print("actual abs: ", X[0])
+
+    # ce = calculate_error(xprediction.data, xtargets)
+
+    # print("error: ", ce)
+
+    print("\n---- y prediciton ----")
+    print("prediction: ", yprediction)
+    print("prediction abs: ", ypred_abs)
+
+    print("actual ratio: ", y_actual)
+    print("actual abs: ", Y_test[i][0])
+
+    # make classifier for rotation: 0, 90, 180, 270
+    print("\n---- r prediciton ----")
+    # print(rprediction.data)
+    print("prediction: ", deg_classifer(rprediction.data.tolist()[0]))
+    print(Y_test[i][1])
+
+# # make classifier for rotation: 0, 90, 180, 270
 # print("\n---- r prediciton ----")
 # # print(rprediction.data)
 # print("prediction: ", deg_classifer(rprediction.data.tolist()[0]))

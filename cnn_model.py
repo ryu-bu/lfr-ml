@@ -226,6 +226,7 @@ ytargets_list = []
 rtargets_list = []
 
 for file in files:
+    print(file)
     f = open(file,)
     # print(file)
     data = json.load(f)
@@ -246,7 +247,7 @@ for file in files:
 
     input_1d = device_in.reshape([1, 1, in_width])
 
-    xtargets_list.append([xtargets, input_1d])
+    xtargets_list.append([xtargets, input_1d, file])
     # put ytargets and rtargets together
     ytargets_list.append([ytargets, rtargets])
     # rtargets_list.append(rtargets)
@@ -258,7 +259,15 @@ for file in files:
 xtargets_list = np.asarray(xtargets_list)
 ytargets_list = np.asarray(ytargets_list)
 
-X_train, X_test, Y_train, Y_test = train_test_split(xtargets_list, ytargets_list, test_size=0.33, random_state=42)
+# X_train, X_test, Y_train, Y_test = train_test_split(xtargets_list, ytargets_list, test_size=0.33, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(xtargets_list, ytargets_list, test_size=0.1, shuffle=False)
+
+print(X_test)
+
+# X_train = xtargets_list[:-1]
+# Y_train = ytargets_list[:-1]
+# X_test = xtargets_list[-1]
+# Y_test = ytargets_list[-1]
 
 # print(component_name_list)
 
@@ -331,6 +340,8 @@ for i, X in enumerate(X_test, 0):
     xprediction, yprediction, rprediction = model(X[1])
 
     print("\n\ncount: ", i)
+    print("file name: ", X[2])
+
 
     print("\n---- x prediciton ----")
     print("prediction: ", xprediction.data)

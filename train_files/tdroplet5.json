@@ -1,0 +1,439 @@
+{
+    "name": "My Other Device",
+    "params": {
+      "xspan": 135000,
+      "yspan": 85000,
+      "valveMap": {},
+      "valveTypeMap": {}
+    },
+    "components": [
+      {
+        "id": "f93eae50-beb7-11ec-965c-87c97ec02a77",
+        "name": "DropletGenT_1",
+        "entity": "DROPLET GENERATOR T",
+        "params": {
+          "position": [
+            92000,
+            10000
+          ],
+          "componentSpacing": 1000,
+          "oilChannelWidth": 800,
+          "waterChannelWidth": 300,
+          "length": 5000,
+          "radius": 500,
+          "height": 250,
+          "rotation": 0
+        },
+        "x-span": 5500,
+        "y-span": 3500,
+        "ports": [
+          {
+            "x": 2500,
+            "y": 0,
+            "layer": "FLOW",
+            "label": "1"
+          }
+        ],
+        "layers": [
+          "9d4e2a06-bebb-11ec-a27a-edcb0991f06d"
+        ]
+      },
+      {
+        "id": "fa661750-beb7-11ec-965c-87c97ec02a77",
+        "name": "DropletGenT_2",
+        "entity": "DROPLET GENERATOR T",
+        "params": {
+          "position": [
+            92000,
+            20000
+          ],
+          "componentSpacing": 1000,
+          "oilChannelWidth": 800,
+          "waterChannelWidth": 300,
+          "length": 5000,
+          "radius": 500,
+          "height": 250,
+          "rotation": 0
+        },
+        "x-span": 5500,
+        "y-span": 3500,
+        "ports": [
+          {
+            "x": 2500,
+            "y": 0,
+            "layer": "FLOW",
+            "label": "1"
+          }
+        ],
+        "layers": [
+          "9d4e2a06-bebb-11ec-a27a-edcb0991f06d"
+        ]
+      },
+      {
+        "id": "22ebc760-beb8-11ec-965c-87c97ec02a77",
+        "name": "BetterMixer_1",
+        "entity": "MIXER",
+        "params": {
+          "position": [
+            109400,
+            7700
+          ],
+          "componentSpacing": 1000,
+          "bendSpacing": 500,
+          "numberOfBends": 5,
+          "channelWidth": 800,
+          "bendLength": 3000,
+          "rotation": 90,
+          "height": 250
+        },
+        "x-span": 13800,
+        "y-span": 4600,
+        "ports": [
+          {
+            "x": 2300,
+            "y": 0,
+            "layer": "FLOW",
+            "label": "1"
+          },
+          {
+            "x": 2300,
+            "y": 13800,
+            "layer": "FLOW",
+            "label": "2"
+          }
+        ],
+        "layers": [
+          "9d4e2a06-bebb-11ec-a27a-edcb0991f06d"
+        ]
+      },
+      {
+        "id": "2c26c140-beb8-11ec-965c-87c97ec02a77",
+        "name": "BetterMixer_2",
+        "entity": "MIXER",
+        "params": {
+          "position": [
+            109400,
+            17700
+          ],
+          "componentSpacing": 1000,
+          "bendSpacing": 500,
+          "numberOfBends": 5,
+          "channelWidth": 800,
+          "bendLength": 3000,
+          "rotation": 90,
+          "height": 250
+        },
+        "x-span": 13800,
+        "y-span": 4600,
+        "ports": [
+          {
+            "x": 2300,
+            "y": 0,
+            "layer": "FLOW",
+            "label": "1"
+          },
+          {
+            "x": 2300,
+            "y": 13800,
+            "layer": "FLOW",
+            "label": "2"
+          }
+        ],
+        "layers": [
+          "9d4e2a06-bebb-11ec-a27a-edcb0991f06d"
+        ]
+      },
+      {
+        "id": "57203071-beb8-11ec-965c-87c97ec02a77",
+        "name": "Mux_1",
+        "entity": "MUX",
+        "params": {
+          "position": [
+            120000,
+            15000
+          ],
+          "componentSpacing": 1000,
+          "flowChannelWidth": 800,
+          "rotation": 90,
+          "spacing": 5000,
+          "in": 1,
+          "out": 2,
+          "width": 1600,
+          "length": 1600,
+          "height": 250,
+          "stageLength": 4000,
+          "controlChannelWidth": 400
+        },
+        "x-span": 8800,
+        "y-span": 11600,
+        "ports": [
+          {
+            "x": 0,
+            "y": 0,
+            "layer": "FLOW",
+            "label": "1"
+          },
+          {
+            "x": 5000,
+            "y": 8800,
+            "layer": "FLOW",
+            "label": "2"
+          },
+          {
+            "x": -5000,
+            "y": 8800,
+            "layer": "FLOW",
+            "label": "3"
+          },
+          {
+            "x": -4100,
+            "y": 5800,
+            "layer": "CONTROL",
+            "label": "4"
+          },
+          {
+            "x": 4100,
+            "y": 7800,
+            "layer": "CONTROL",
+            "label": "5"
+          }
+        ],
+        "layers": [
+          "9d4e2a06-bebb-11ec-a27a-edcb0991f06d",
+          "9d4e5100-bebb-11ec-a27a-edcb0991f06d"
+        ]
+      }
+    ],
+    "connections": [],
+    "layers": [
+      {
+        "id": "9d4e2a06-bebb-11ec-a27a-edcb0991f06d",
+        "name": "flow",
+        "type": "FLOW",
+        "group": "0",
+        "params": {
+          "z_offset": 0,
+          "flip": false
+        }
+      },
+      {
+        "id": "9d4e5100-bebb-11ec-a27a-edcb0991f06d",
+        "name": "control",
+        "type": "FLOW",
+        "group": "0",
+        "params": {
+          "z_offset": 1200,
+          "flip": true
+        }
+      },
+      {
+        "id": "9d4e5101-bebb-11ec-a27a-edcb0991f06d",
+        "name": "cells",
+        "type": "FLOW",
+        "group": "0",
+        "params": {
+          "z_offset": 2000,
+          "flip": false
+        }
+      }
+    ],
+    "features": [
+      {
+        "name": "flow",
+        "color": "indigo",
+        "params": {
+          "z_offset": 0,
+          "flip": false
+        },
+        "features": {
+          "dceee8a0-beb7-11ec-965c-87c97ec02a77": {
+            "id": "dceee8a0-beb7-11ec-965c-87c97ec02a77",
+            "name": "dceee8a0-beb7-11ec-965c-87c97ec02a77",
+            "macro": "EDGE",
+            "set": "Basic",
+            "dxfData": [],
+            "type": "EDGE"
+          },
+          "f93e6030-beb7-11ec-965c-87c97ec02a77": {
+            "id": "f93e6030-beb7-11ec-965c-87c97ec02a77",
+            "name": "New Feature",
+            "macro": "DropletGenT",
+            "set": "Basic",
+            "referenceID": "f93eae50-beb7-11ec-965c-87c97ec02a77",
+            "params": {
+              "position": [
+                92000,
+                10000
+              ],
+              "componentSpacing": 1000,
+              "oilChannelWidth": 800,
+              "waterChannelWidth": 300,
+              "length": 5000,
+              "radius": 500,
+              "height": 250,
+              "rotation": 0
+            },
+            "dxfData": [],
+            "type": "XY"
+          },
+          "fa65a220-beb7-11ec-965c-87c97ec02a77": {
+            "id": "fa65a220-beb7-11ec-965c-87c97ec02a77",
+            "name": "New Feature",
+            "macro": "DropletGenT",
+            "set": "Basic",
+            "referenceID": "fa661750-beb7-11ec-965c-87c97ec02a77",
+            "params": {
+              "position": [
+                92000,
+                20000
+              ],
+              "componentSpacing": 1000,
+              "oilChannelWidth": 800,
+              "waterChannelWidth": 300,
+              "length": 5000,
+              "radius": 500,
+              "height": 250,
+              "rotation": 0
+            },
+            "dxfData": [],
+            "type": "XY"
+          },
+          "22eb2b20-beb8-11ec-965c-87c97ec02a77": {
+            "id": "22eb2b20-beb8-11ec-965c-87c97ec02a77",
+            "name": "New Feature",
+            "macro": "BetterMixer",
+            "set": "Basic",
+            "referenceID": "22ebc760-beb8-11ec-965c-87c97ec02a77",
+            "params": {
+              "position": [
+                109400,
+                7700
+              ],
+              "componentSpacing": 1000,
+              "bendSpacing": 500,
+              "numberOfBends": 5,
+              "channelWidth": 800,
+              "bendLength": 3000,
+              "rotation": 90,
+              "height": 250
+            },
+            "dxfData": [],
+            "type": "XY"
+          },
+          "2c262500-beb8-11ec-965c-87c97ec02a77": {
+            "id": "2c262500-beb8-11ec-965c-87c97ec02a77",
+            "name": "New Feature",
+            "macro": "BetterMixer",
+            "set": "Basic",
+            "referenceID": "2c26c140-beb8-11ec-965c-87c97ec02a77",
+            "params": {
+              "position": [
+                109400,
+                17700
+              ],
+              "componentSpacing": 1000,
+              "bendSpacing": 500,
+              "numberOfBends": 5,
+              "channelWidth": 800,
+              "bendLength": 3000,
+              "rotation": 90,
+              "height": 250
+            },
+            "dxfData": [],
+            "type": "XY"
+          },
+          "571fe250-beb8-11ec-965c-87c97ec02a77": {
+            "id": "571fe250-beb8-11ec-965c-87c97ec02a77",
+            "name": "New Feature",
+            "macro": "Mux",
+            "set": "Basic",
+            "referenceID": "57203071-beb8-11ec-965c-87c97ec02a77",
+            "params": {
+              "position": [
+                120000,
+                15000
+              ],
+              "componentSpacing": 1000,
+              "flowChannelWidth": 800,
+              "rotation": 90,
+              "spacing": 5000,
+              "in": 1,
+              "out": 2,
+              "width": 1600,
+              "length": 1600,
+              "height": 250,
+              "stageLength": 4000,
+              "controlChannelWidth": 400
+            },
+            "dxfData": [],
+            "type": "XY"
+          }
+        }
+      },
+      {
+        "name": "control",
+        "color": "red",
+        "params": {
+          "z_offset": 1200,
+          "flip": true
+        },
+        "features": {
+          "dceee8a0-beb7-11ec-965c-87c97ec02a77": {
+            "id": "dceee8a0-beb7-11ec-965c-87c97ec02a77",
+            "name": "dceee8a0-beb7-11ec-965c-87c97ec02a77",
+            "macro": "EDGE",
+            "set": "Basic",
+            "dxfData": [],
+            "type": "EDGE"
+          },
+          "57203070-beb8-11ec-965c-87c97ec02a77": {
+            "id": "57203070-beb8-11ec-965c-87c97ec02a77",
+            "name": "New Feature",
+            "macro": "Mux_control",
+            "set": "Basic",
+            "referenceID": "57203071-beb8-11ec-965c-87c97ec02a77",
+            "params": {
+              "position": [
+                120000,
+                15000
+              ],
+              "componentSpacing": 1000,
+              "flowChannelWidth": 800,
+              "rotation": 90,
+              "spacing": 5000,
+              "in": 1,
+              "out": 2,
+              "width": 1600,
+              "length": 1600,
+              "height": 250,
+              "stageLength": 4000,
+              "controlChannelWidth": 400
+            },
+            "dxfData": [],
+            "type": "XY"
+          }
+        }
+      },
+      {
+        "name": "cells",
+        "color": "indigo",
+        "params": {
+          "z_offset": 2000,
+          "flip": false
+        },
+        "features": {
+          "dceee8a0-beb7-11ec-965c-87c97ec02a77": {
+            "id": "dceee8a0-beb7-11ec-965c-87c97ec02a77",
+            "name": "dceee8a0-beb7-11ec-965c-87c97ec02a77",
+            "macro": "EDGE",
+            "set": "Basic",
+            "dxfData": [],
+            "type": "EDGE"
+          }
+        }
+      }
+    ],
+    "version": 1.1,
+    "groups": [],
+    "customComponents": {}
+  }
